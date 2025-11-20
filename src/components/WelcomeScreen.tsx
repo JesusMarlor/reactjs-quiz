@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BookOpen } from 'lucide-react';
+import { useTimer } from "../components/TimerContext";
 
 interface WelcomeScreenProps {
   onStart: (name: string) => void;
@@ -7,9 +8,13 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const [name, setName] = useState('');
+  const { startTimer } = useTimer();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    startTimer();
+
     if (name.trim()) {
       onStart(name.trim());
     }

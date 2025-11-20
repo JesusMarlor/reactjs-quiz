@@ -1,6 +1,7 @@
 import { Answer } from './Quiz';
 import { Award, Download, CheckCircle, XCircle } from 'lucide-react';
 import { generatePDF } from '../utils/pdfGenerator';
+import {useTimer} from '../components/TimerContext'
 
 interface ResultsProps {
   candidateName: string;
@@ -12,6 +13,10 @@ export default function Results({ candidateName, answers, onRestart }: ResultsPr
   const correctAnswers = answers.filter((a) => a.isCorrect).length;
   const totalQuestions = answers.length;
   const score = Math.round((correctAnswers / totalQuestions) * 100);
+  const { time, resetTimer} = useTimer();
+
+  const TimeFormatted = new Date(time * 1000).toISOString().substring(11, 19); 
+  //pasar a hh:mm:ss
 
   const getGrade = (score: number) => {
     if (score >= 90) return { text: 'Excelente', color: 'text-green-600' };
@@ -23,7 +28,7 @@ export default function Results({ candidateName, answers, onRestart }: ResultsPr
   const grade = getGrade(score);
 
   const handleDownloadPDF = () => {
-    generatePDF(candidateName, answers, score);
+    generatePDF(candidateName, answers, score, TimeFormatted);
   };
 
   return (
@@ -67,7 +72,10 @@ export default function Results({ candidateName, answers, onRestart }: ResultsPr
             </button>
 
             <button
-              onClick={onRestart}
+                   onClick={() => {
+               resetTimer(); 
+               onRestart(); 
+                }}
               className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md"
             >
               Nuevo Quiz

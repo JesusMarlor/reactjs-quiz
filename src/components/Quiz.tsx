@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Question } from '../data/questions';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useTimer } from '../components/TimerContext';
 
 interface QuizProps {
   questions: Question[];
-  candidateName: string;
   onComplete: (answers: Answer[]) => void;
 }
 
@@ -17,12 +17,13 @@ export interface Answer {
   type: string;
 }
 
-export default function Quiz({ questions, candidateName, onComplete }: QuizProps) {
+export default function Quiz({ questions, onComplete }: QuizProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
+  const { stopTimer } = useTimer();
 
   const handleAnswer = (answer: string) => {
     setAnswers((prev) => ({
@@ -47,6 +48,7 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
     const finalAnswers: Answer[] = questions.map((q) => {
       const userAnswer = answers[q.id] || '';
       let isCorrect = false;
+      stopTimer();
 
       if (q.type === 'open') {
         isCorrect = userAnswer.toLowerCase().trim() === q.correctAnswer.toLowerCase().trim();
@@ -76,9 +78,6 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xl font-semibold text-gray-800">
-                {candidateName}
-              </h2>
               <span className="text-sm text-gray-600">
                 Pregunta {currentIndex + 1} de {questions.length}
               </span>
