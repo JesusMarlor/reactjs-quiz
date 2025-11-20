@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 interface WelcomeScreenProps {
   onStart: (name: string) => void;
@@ -8,6 +9,7 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const [name, setName] = useState('');
+  const [savedScores, setSavedScores] = useState<any[]>([])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,6 +17,28 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       onStart(name.trim());
     }
   };
+
+  const loadScores = () => {
+    try {
+      const data = JSON.parse(localStorage.getItem('quizScores') || '[]');
+
+      if (Array.isArray(data)) {
+        setSavedScores(data);
+        console.log('Cargado quizScores desde localStorage:', data);
+      }else{
+        console.error('Los datos en localStorage no son válidos');
+      }
+
+    }catch(e){
+      console.error('Error al cargar los datos de localStorage', e);
+    }
+  };
+
+  // cargar scores al montar el componente
+  useEffect(() => {
+    loadScores();
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
@@ -36,6 +60,17 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           <p className="text-center text-gray-600 mb-8">
             Responde 20 preguntas sobre React y pon a prueba tus conocimientos
           </p>
+
+         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h3 className="font-semibold text-gray-800 mb-2">Ranking TOP</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              {savedScores.map((item, index) => (
+                <li key={index}>
+                  {item.name} - {item.score}% - {item.date}
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

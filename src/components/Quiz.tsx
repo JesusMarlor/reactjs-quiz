@@ -25,7 +25,6 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
   let time = 0.5;
-  let idBoolean = 0;
 
   const handleAnswer = (answer: string) => {
     setAnswers((prev) => ({

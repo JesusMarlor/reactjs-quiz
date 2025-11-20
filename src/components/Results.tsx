@@ -1,4 +1,5 @@
 import { Answer } from './Quiz';
+import { useEffect } from 'react';
 import { Award, Download, CheckCircle, XCircle } from 'lucide-react';
 import { generatePDF } from '../utils/pdfGenerator';
 
@@ -24,6 +25,30 @@ export default function Results({ candidateName, answers, onRestart }: ResultsPr
 
   const handleDownloadPDF = () => {
     generatePDF(candidateName, answers, score);
+  };
+
+  // Guardar candidatos en localStorage
+  const saveScore = () => {
+
+    const existingData = JSON.parse(localStorage.getItem('quizScores') || '[]');
+
+    const candidateData = {
+      name: candidateName,
+      score: score,
+      date: new Date().toLocaleString(),
+    };
+
+    const updatedData = [...existingData, candidateData];
+
+    updatedData.sort((a, b) => b.score - a.score);
+
+    const top3 = updatedData.slice(0, 3);
+    
+    console.log('Updated quizScores:', updatedData);
+
+    localStorage.setItem('quizScores', JSON.stringify(top3));
+
+    console.log("Score guardado: ", top3)
   };
 
   return (
@@ -67,7 +92,10 @@ export default function Results({ candidateName, answers, onRestart }: ResultsPr
             </button>
 
             <button
-              onClick={onRestart}
+              onClick={() => {
+                saveScore(); 
+                onRestart();
+              }}
               className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md"
             >
               Nuevo Quiz
