@@ -1,7 +1,22 @@
 import { jsPDF } from 'jspdf';
 import { Answer } from '../components/Quiz';
 
-export function generatePDF(candidateName: string, answers: Answer[], score: number) {
+function formatTimer(timeString: string) {
+  const [hh, mm, ss] = timeString.split(":").map(Number);
+
+  if (hh === 0 && mm === 0) return `${ss}s`;
+  if (hh === 0) return `${mm}m ${ss}s`;
+  return `${hh}h ${mm}m ${ss}s`;
+} 
+//Formato para que no aparezca el formato completo
+
+
+export function generatePDF(candidateName: string,
+   answers: Answer[],
+    score: number,
+    finalTime: string
+  ) {
+
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -43,6 +58,10 @@ export function generatePDF(candidateName: string, answers: Answer[], score: num
     day: 'numeric',
   });
   doc.text(`Fecha: ${date}`, margin, yPosition);
+
+  yPosition += 10;
+  const formattedTime = formatTimer(finalTime);
+  doc.text(`Tiempo total: ${formattedTime}`, margin, yPosition);
 
   yPosition += 15;
   doc.setFillColor(240, 240, 240);

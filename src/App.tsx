@@ -4,10 +4,15 @@ import Quiz from './components/Quiz';
 import Results from './components/Results';
 import { getRandomQuestions, Question } from './data/questions';
 import { Answer } from './components/Quiz';
+import { TimerSuper} from "./components/TimerContext"
+import Header from './components/Header';
+
 
 type Screen = 'welcome' | 'quiz' | 'results';
 
-function App() {
+function App() {    
+      
+    
   const [screen, setScreen] = useState<Screen>('welcome');
   const [candidateName, setCandidateName] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -31,13 +36,14 @@ function App() {
     setScreen('welcome');
   };
 
-  return (
+  return ( 
     <>
+    <TimerSuper>
+        <Header candidateName={candidateName} />
       {screen === 'welcome' && <WelcomeScreen onStart={handleStart} />}
       {screen === 'quiz' && (
         <Quiz
           questions={questions}
-          candidateName={candidateName}
           onComplete={handleComplete}
         />
       )}
@@ -47,8 +53,9 @@ function App() {
           answers={answers}
           onRestart={handleRestart}
         />
-      )}
-    </>
+      )} 
+      </TimerSuper>
+    </> 
   );
 }
 
