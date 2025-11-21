@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Question } from '../data/questions';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import winSound from '../audio/pvzWin.mp3'
 
 interface QuizProps {
   questions: Question[];
@@ -69,6 +70,13 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
     onComplete(finalAnswers);
   };
 
+  const playFinishSound = () => {
+
+    const audio = new Audio(winSound);
+    audio.play();
+
+  }
+
   const isAnswered = answers[currentQuestion.id] !== undefined;
   const isLastQuestion = currentIndex === questions.length - 1;
 
@@ -99,14 +107,7 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
             </div>
 
             { 
-              /* <motion.div
-              key={currentIndex} 
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }} 
-              exit={{ opacity: 0, x: -100 }} 
-              transition={{ duration: 0.5 }} 
-            >
-              </motion.div> */
+  
             }
               <div className="mb-8">
                 
@@ -249,7 +250,10 @@ export default function Quiz({ questions, candidateName, onComplete }: QuizProps
                 </button>
               ) : (
                 <button
-                  onClick={handleFinish}
+                  onClick={() => {
+                    handleFinish();
+                    playFinishSound();
+                  }}
                   disabled={!isAnswered}
                   className={`px-6 py-2 rounded-lg font-semibold transition ${
                     isAnswered
